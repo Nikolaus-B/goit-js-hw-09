@@ -25,7 +25,7 @@ refs.startBtn.classList.add('timer-btn');
 refs.startBtn.style.marginLeft = '10px';
 refs.startBtn.setAttribute('disabled', false);
 
-const fl = flatpickr('#datetime-picker', {
+flatpickr('#datetime-picker', {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
@@ -60,13 +60,19 @@ function addLeadingZero({ days, hours, minutes, seconds }) {
   refs.minutes.textContent = String(minutes).padStart(2, 0);
   refs.seconds.textContent = String(seconds).padStart(2, 0);
 }
+
 let intervalId = null;
+let diferentTime = 0;
 refs.startBtn.addEventListener('click', () => {
   refs.startBtn.setAttribute('disabled', false);
   btnStop.removeAttribute('disabled');
   intervalId = setInterval(() => {
-    let diferentTime = selectedDate - Date.now();
+    diferentTime = selectedDate - Date.now();
     addLeadingZero(convertMs(diferentTime));
+    if (diferentTime < 1000) {
+      clearInterval(intervalId);
+      Notify.success('timer stop');
+    }
   }, 1000);
 });
 
