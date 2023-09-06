@@ -14,10 +14,18 @@ const refs = {
 const currentDate = Date.now();
 let selectedDate = null;
 
+const btnStop = document.createElement('button');
+btnStop.textContent = 'Reset';
+btnStop.classList.add('timer-btn');
+btnStop.style.marginLeft = '10px';
+refs.startBtn.after(btnStop);
+btnStop.setAttribute('disabled', false);
+
 refs.startBtn.classList.add('timer-btn');
+refs.startBtn.style.marginLeft = '10px';
 refs.startBtn.setAttribute('disabled', false);
 
-flatpickr('#datetime-picker', {
+const fl = flatpickr('#datetime-picker', {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
@@ -52,10 +60,21 @@ function addLeadingZero({ days, hours, minutes, seconds }) {
   refs.minutes.textContent = String(minutes).padStart(2, 0);
   refs.seconds.textContent = String(seconds).padStart(2, 0);
 }
-
+let intervalId = null;
 refs.startBtn.addEventListener('click', () => {
-  const intervalId = setInterval(() => {
+  refs.startBtn.setAttribute('disabled', false);
+  btnStop.removeAttribute('disabled');
+  intervalId = setInterval(() => {
     let diferentTime = selectedDate - Date.now();
     addLeadingZero(convertMs(diferentTime));
   }, 1000);
+});
+
+btnStop.addEventListener('click', () => {
+  refs.days.textContent = '00';
+  refs.hours.textContent = '00';
+  refs.minutes.textContent = '00';
+  refs.seconds.textContent = '00';
+  clearInterval(intervalId);
+  btnStop.setAttribute('disabled', false);
 });
